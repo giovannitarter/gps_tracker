@@ -72,13 +72,13 @@ void loop() {
   }
 
   writeInfo(position, 100);
-  Serial.print(position);
+  Serial.println(position);
 
   Serial.printf("Sending packet: %d\n\r", counter);
 
   // send packet
   LoRa.beginPacket();
-  LoRa.printf("% 10d - %s %d\n\r", millis(), position, counter);
+  LoRa.printf("% 10d - %s %d", millis(), position, counter);
   LoRa.endPacket();
 
   counter++;
