@@ -187,7 +187,7 @@ int LoRaClass::beginPacket(int implicitHeader)
 
 int LoRaClass::endPacket(bool async)
 {
-  
+
   if ((async) && (_onTxDone))
       writeRegister(REG_DIO_MAPPING_1, 0x40); // DIO0 => TXDONE
 
@@ -668,10 +668,10 @@ void LoRaClass::setGain(uint8_t gain)
   if (gain > 6) {
     gain = 6;
   }
-  
+
   // set to standby
   idle();
-  
+
   // set gain
   if (gain == 0) {
     // if gain = 0, enable AGC
@@ -679,10 +679,10 @@ void LoRaClass::setGain(uint8_t gain)
   } else {
     // disable AGC
     writeRegister(REG_MODEM_CONFIG_3, 0x00);
-	
+
     // clear Gain and set LNA boost
     writeRegister(REG_LNA, 0x03);
-	
+
     // set gain
     writeRegister(REG_LNA, readRegister(REG_LNA) | (gain << 5));
   }
@@ -713,11 +713,15 @@ void LoRaClass::setSPIFrequency(uint32_t frequency)
 void LoRaClass::dumpRegisters(Stream& out)
 {
   for (int i = 0; i < 128; i++) {
-    out.print("0x");
-    out.print(i, HEX);
-    out.print(": 0x");
-    out.println(readRegister(i), HEX);
+
+    if (i % 8 == 0) {
+      out.printf("\n\r0x%.2x: ", i);
+    }
+
+    out.printf("0x%.2x ", readRegister(i));
   }
+
+  out.print("\n\r");
 }
 
 void LoRaClass::explicitHeaderMode()
