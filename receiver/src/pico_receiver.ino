@@ -10,7 +10,7 @@
 void setup() {
 
   delay(2000);
-  
+
   Serial.begin(115200);               // initialize serial
   while (!Serial);
 
@@ -24,7 +24,7 @@ void setup() {
   }
 
   LoRa.dumpRegisters(Serial);
-  
+
 }
 
 
@@ -33,25 +33,26 @@ void loop() {
 
   int packetSize = 0;
 
-  Serial.println("\nListening");
+  Serial.println("\n\rListening");
   while (true) {
     packetSize = LoRa.parsePacket();
     if (packetSize) {
       break;
     }
   }
-    
+
   if (packetSize) {
   // received a packet
-  Serial.print("Received packet '");
+  Serial.print("Received packet:\n\r\'");
 
   // read packet
+  uint32_t len = 0;
   while (LoRa.available()) {
     Serial.print((char)LoRa.read());
+    len += 1;
   }
 
   // print RSSI of packet
-  Serial.print("' with RSSI ");
-  Serial.println(LoRa.packetRssi());  
+  Serial.printf("\'\n\rRSSI: %d, len: %d\n\r", LoRa.packetRssi(), len);
   }
 }

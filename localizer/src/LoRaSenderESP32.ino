@@ -4,6 +4,9 @@
 
 int counter = 0;
 
+uint32_t time_to_time = 0;
+uint32_t time_to_pos = 0;
+
 TinyGPSPlus gps;
 
 
@@ -12,10 +15,21 @@ void writeInfo(char *out, size_t len)
 
   char location[30];
   if (gps.location.isValid()) {
+
+    if (time_to_pos == 0) {
+      time_to_pos = millis();
+    }
+
     snprintf(location, 30, "%.6f %.6f", gps.location.lat(), gps.location.lng());
   }
   else {
     strcpy(location, "INVALID");
+  }
+
+  if (time_to_time == 0) {
+    if (gps.date.year() != 2000) {
+      time_to_time = millis();
+    }
   }
 
   snprintf(out, len,
@@ -78,7 +92,13 @@ void loop() {
 
   // send packet
   LoRa.beginPacket();
-  LoRa.printf("% 10d - %s %d", millis(), position, counter);
+  LoRa.printf("% 10d - %s %d %d %d",
+    millis(),
+    position,
+    counter,
+    time_to_time,
+    time_to_pos
+    );
   LoRa.endPacket();
 
   counter++;
